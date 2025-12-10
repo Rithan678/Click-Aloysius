@@ -2,7 +2,50 @@
 Click Aloysius: Project 
 Click Aloysius is an advanced, secure, and user-centric photo management system designed exclusively for college events conducted under staff coordination. The system enables organized storage, controlled upload, and broad viewing of event photographs, ensuring privacy, transparency, and community sharing.
 
-Key Features:
+## Setup Instructions
+
+### Prerequisites
+- Node.js (v16 or higher)
+- MySQL (v8 or higher)
+- npm or yarn
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Rithan678/Click-Aloysius.git
+   cd Click-Aloysius
+   ```
+
+2. **Backend Setup:**
+   ```bash
+   cd backend
+   npm install
+   # Configure .env file with your database credentials
+   npm run dev
+   ```
+
+3. **Frontend Setup:**
+   ```bash
+   cd ../frontend
+   npm install
+   npm start
+   ```
+
+4. **Database Setup:**
+   - Create a MySQL database named `click_aloy`
+   - Run the schema.sql file in the database folder
+
+### Project Structure
+```
+Click-Aloysius/
+├── backend/          # Node.js Express API
+├── frontend/         # React application
+├── database/         # MySQL schema and scripts
+└── README.md
+```
+
+## Key Features:
 - Staff coordinators create events and pre-approve students by their college registration numbers to upload event photos.
 - Only pre-approved students can upload photos directly; the approval workflow remains with staff for quality and privacy oversight.
 - All students and staff have open access to view and freely download approved photos across events.
