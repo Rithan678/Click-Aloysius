@@ -15,6 +15,7 @@ function Header() {
         <Button color="inherit" component={Link} to="/events">Events</Button>
         <Button color="inherit" component={Link} to="/photos">Photos</Button>
         <Button color="inherit" component={Link} to="/my-photos">My Photos</Button>
+        <Button color="inherit" component={Link} to="/test/face-recognition">🧪 Test</Button>
       </Toolbar>
     </AppBar>
   );
