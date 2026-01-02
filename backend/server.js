@@ -6,6 +6,10 @@ const bcrypt = require('bcryptjs');
 const multer = require('multer');
 require('dotenv').config();
 
+// Import routes
+const faceRecognitionRoutes = require('./routes/faceRecognition');
+const photosRoutes = require('./routes/photos');
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -13,6 +17,9 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve uploaded files
+app.use('/uploads', express.static('uploads'));
 
 // MySQL Connection
 const db = mysql.createConnection({
@@ -35,6 +42,12 @@ app.get('/', (req, res) => {
   res.send('Click Aloysius Backend API');
 });
 
+// Face Recognition routes
+app.use('/api/face', faceRecognitionRoutes);
+
+// Photos routes
+app.use('/api/photos', photosRoutes);
+
 // Auth routes placeholder
 app.post('/api/auth/login', (req, res) => {
   // TODO: Implement login
@@ -55,17 +68,6 @@ app.get('/api/events', (req, res) => {
 app.post('/api/events', (req, res) => {
   // TODO: Create event
   res.json({ message: 'Create event endpoint' });
-});
-
-// Photos routes placeholder
-app.get('/api/photos', (req, res) => {
-  // TODO: Get photos
-  res.json({ message: 'Photos endpoint' });
-});
-
-app.post('/api/photos/upload', (req, res) => {
-  // TODO: Upload photo
-  res.json({ message: 'Upload photo endpoint' });
 });
 
 app.listen(PORT, () => {
