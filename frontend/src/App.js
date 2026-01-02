@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Events from './pages/Events';
 import Photos from './pages/Photos';
 import MyPhotos from './pages/MyPhotos';
+import FaceRecognitionTest from './pages/FaceRecognitionTest';
 import { loadFaceApiModels } from './utils/faceApiUtils';
 
 // Face Recognition Context
@@ -73,6 +74,7 @@ function App() {
               <Route path="/events" element={<Events />} />
               <Route path="/photos" element={<Photos />} />
               <Route path="/my-photos" element={<MyPhotos />} />
+              <Route path="/test/face-recognition" element={<FaceRecognitionTest />} />
             </Routes>
           </div>
         </Router>
