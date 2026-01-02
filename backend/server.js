@@ -10,8 +10,12 @@ require('dotenv').config();
 const faceRecognitionRoutes = require('./routes/faceRecognition');
 const photosRoutes = require('./routes/photos');
 
+// Import mock database for testing (optional)
+const mockDatabase = require('./db/mockDatabase');
+
 const app = express();
 const PORT = process.env.PORT || 5000;
+const USE_MOCK_DB = process.env.USE_MOCK_DB === 'true' || true; // Set to true for testing
 
 // Middleware
 app.use(cors());
@@ -21,25 +25,50 @@ app.use(express.urlencoded({ extended: true }));
 // Serve uploaded files
 app.use('/uploads', express.static('uploads'));
 
-// MySQL Connection
-const db = mysql.createConnection({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'click_aloy'
-});
+// Database Connection
+let db;
 
-db.connect((err) => {
-  if (err) {
-    console.error('Database connection failed:', err);
-  } else {
-    console.log('Connected to MySQL database');
-  }
-});
+if (USE_MOCK_DB) {
+  console.log('🔧 Using Mock Database (for testing)');
+  db = mockDatabase;
+  db.connect();
+} else {
+  console.log('🗄️ Connecting to MySQL...');
+  db = mysql.createConnection({
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'click_aloy'
+  });
+
+  db.connect((err) => {
+    if (err) {
+      console.error('❌ Database connection failed:', err);
+      console.log('💡 Tip: Start MySQL or set USE_MOCK_DB=true');
+      process.exit(1);
+    } else {
+      console.log('✓ Connected to MySQL database');
+    }
+  });
+}
 
 // Routes
 app.get('/', (req, res) => {
-  res.send('Click Aloysius Backend API');
+  res.json({
+    message: 'Click Aloysius Backend API',
+    status: 'running',
+    database: USE_MOCK_DB ? 'mock' : 'mysql',
+    version: '1.0.0'
+  });
+});
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    timestamp: new Date(),
+    database: USE_MOCK_DB ? 'mock' : 'mysql'
+  });
 });
 
 // Face Recognition routes
@@ -62,7 +91,10 @@ app.post('/api/auth/register', (req, res) => {
 // Events routes placeholder
 app.get('/api/events', (req, res) => {
   // TODO: Get events
-  res.json({ message: 'Events endpoint' });
+  res.json({
+    success: true,
+    events: USE_MOCK_DB ? db.getAllEvents() : []
+  });
 });
 
 app.post('/api/events', (req, res) => {
@@ -70,6 +102,31 @@ app.post('/api/events', (req, res) => {
   res.json({ message: 'Create event endpoint' });
 });
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(err.status || 500).json({
+    success: false,
+    error: err.message || 'Internal Server Error'
+  });
+});
+
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`
+╔════════════════════════════════════════╗
+║   Click Aloysius Backend Server       ║
+╚════════════════════════════════════════╝
+
+✓ Server running on port ${PORT}
+✓ API: http://localhost:${PORT}
+✓ Database: ${USE_MOCK_DB ? '🔧 Mock (Testing)' : '🗄️ MySQL'}
+✓ Status: http://localhost:${PORT}/api/health
+
+Environment:
+  NODE_ENV: ${process.env.NODE_ENV || 'development'}
+  USE_MOCK_DB: ${USE_MOCK_DB}
+  CORS: enabled
+  
+Ready to accept requests! 🚀
+  `);
 });
