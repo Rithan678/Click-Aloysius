@@ -15,9 +15,6 @@ function Header() {
         <Button color="inherit" component={Link} to="/events">Events</Button>
         <Button color="inherit" component={Link} to="/photos">Photos</Button>
         <Button color="inherit" component={Link} to="/my-photos">My Photos</Button>
-        <Button color="inherit" component={Link} to="/test/face-recognition" sx={{ ml: 1, bgcolor: 'rgba(255,255,255,0.2)' }}>
-          🧪 Test
-        </Button>
       </Toolbar>
     </AppBar>
   );
